@@ -163,6 +163,10 @@ iframe {
   width: 100%;
   margin: 0 auto;
 }
+.success{
+  font-size: 20px !important;
+  color: green !important;
+}
 
 .container-login100 {
   width: 100%;  
