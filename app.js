@@ -1,11 +1,17 @@
 import app from "./server.js"
 import db from "./dbconfig.js"
+import {initialize} from "./passportConfig.js";
 import bcrypt, { hash } from "bcrypt";
 import session from "express-session";
 import flash from "express-flash";
+import passport from "passport";
+let subscription;
+let emailuser;
+let logincheck=false;
 
 
 //middelwares
+initialize(passport);
 
 app.use(session(
     {
@@ -16,6 +22,10 @@ app.use(session(
     }
 ));
 
+app.use(passport.initialize());
+
+app.use(passport.session())
+
 app.use(flash())
 
 
@@ -24,27 +34,122 @@ app.get("/",(req,res)=>{
     res.render("index.ejs");
 })
 
-app.get("/disease_detection",(req,res)=>{
-    res.render("disease_detection.ejs");
+app.get("/disease_detection",checkNotAuthenticated,isFree,(req,res)=>{
+    res.render("disease_detection.ejs",{
+        subscription:req.user.subscription
+       
+    });
 })
 
-app.get("/pricing",(req,res)=>{
-    res.render("pricing.ejs");
+app.get("/pricing",isloggedin,(req,res)=>{
+    res.render("pricing.ejs",{
+        logincheck,
+        subscription
+    });
+    
 })
 
 app.get("/aboutUs",(req,res)=>{
     res.render("aboutUs.ejs") ;
 })
 
-app.get("/login",(req,res)=>{
+app.get("/login",checkAuthenticated,(req,res)=>{
     res.render("login.ejs");
    
 })
 
-app.get("/register",(req,res)=>{
+app.get("/register",checkAuthenticated,(req,res)=>{
     res.render("register.ejs");
 })
 
+app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
+    subscription=req.user.subscription
+    emailuser=req.user.email
+    
+    res.render("dashboard.ejs",{
+        user:req.user.name,
+        subscription
+    })
+})
+
+
+
+app.get("/logout",(req,res)=>{
+    req.logOut((err)=>{
+        if(err){
+            throw err;
+        }
+        req.flash("success_msg","Successfully Logged Out");
+        logincheck=false;
+    res.redirect("/login");
+    
+
+    }); 
+    
+    
+})
+ 
+app.get("/free",checkNotAuthenticated,(req,res)=>{
+
+    //code for payment interface on succcessfull payent this query will be executed
+    db.query( 
+        `UPDATE users
+        SET subscription = 'Free'
+        WHERE email = $1;`,[emailuser],(err,result)=>{
+            if(err){
+                throw err;
+            }
+            console.log(result.rows);});
+
+    //after payment and above process theis will get exeued
+    res.redirect("/dashboard")
+        
+})
+
+app.get("/standerd",checkNotAuthenticated,(req,res)=>{
+
+    //code for payment interface on succcessfull payent this query will be executed
+    db.query( 
+        `UPDATE users
+        SET subscription = 'Standard'
+        WHERE email = $1;`,[emailuser],(err,result)=>{
+            if(err){
+                throw err;
+            }
+            console.log(result.rows);});
+
+    //after payment and above process theis will get exeued
+    res.redirect("/dashboard")
+        
+})
+app.get("/premium",checkNotAuthenticated,(req,res)=>{
+
+    //code for payment interface on succcessfull payent this query will be executed
+    db.query( 
+        `UPDATE users
+        SET subscription = 'Premium'
+        WHERE email = $1;`,[emailuser],(err,result)=>{
+            if(err){
+                throw err;
+            }
+            console.log(result.rows);});
+
+    //after payment and above process theis will get exeued
+    res.redirect("/dashboard")
+        
+})
+
+app.get("/device",checkNotAuthenticated,(req,res)=>{
+res.render("device.ejs",{
+    subscription
+})
+})
+
+app.get("/community",checkNotAuthenticated,(req,res)=>{
+    res.render("community/community.ejs",{
+        subscription
+    });
+})
 
 // handeling the post request for register page
 
@@ -100,11 +205,54 @@ app.post("/registerform",async (req,res)=>{
             }
         );
     }
-
-   
-
 })
 
+
+app.post("/login",passport.authenticate("local",{
+    successRedirect:"/dashboard",
+    failureRedirect:"/login",
+    failureFlash:true
+}))
+
+
+// Function for authentication session
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+   
+      return res.redirect("/dashboard");
+      
+    }
+    
+   
+    next();
+  }
+  
+  function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    
+    
+    res.redirect("/login");
+  }
+  
+
+  function isFree(req,res,next){
+    subscription=req.user.subscription
+    if(subscription=="Free"){
+        return res.redirect("/dashboard");
+    }
+    next();
+  }
+
+  function isloggedin(req, res, next) {
+    // subscription=req.user.subscription
+    if (req.isAuthenticated()) {
+      logincheck=true;
+    }
+    next();
+    
+    }
 
 
 

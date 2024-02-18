@@ -1,21 +1,22 @@
+<%- include("partials/navbarloggedin.ejs") %>
+
 <head>
-    <title>disease-detection</title>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection</title>
+
 <body>
-    <%- include("partials/navbar.ejs") %>
-
-    <div>Teachable Machine Image Model</div>
-<button type="button" class="button">Start</button>
-
-<div id="webcam-container"></div>
-<div id="label-container"></div>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-<script src="/javascript/disease-detection.js"></script>
-
-
-
+    <input type="file" id="uploadInput" accept="image/*">
+    <button class="button">Detect Disease</button>
+    <div id="imagePreview"></div>
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
+    <h1 id="disease"></h1>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script src="javascript/disease-detection.js"></script>
 </body>
+
+
+
+
