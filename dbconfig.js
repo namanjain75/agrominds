@@ -11,4 +11,4 @@ const db= new pg.Client({
 
 db.connect();
 
-export default db;
+export default pg;
