@@ -1,7 +1,25 @@
 <%- include("partials/navbarloggedin") %>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Device Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thingspeak Data Display</title>
+    <link rel="stylesheet" href="css/device.css">
+    
 </head>
 <body>
-    Fetch device api
+    <div class="container">
+        <h1>Our Sensors Readings</h1>
+
+        <div id="dataContainer">
+            <h2>Current Data:</h2>
+            <p id="temperature">Temperature: Loading...</p>
+            <p id="humidity">Humidity: Loading...</p>
+            <p id="soilMoisture">Soil Moisture: Loading...</p>
+        </div>
+    </div>
+
+    <script src="javascript/device.js"></script>
 </body>
+</html>
