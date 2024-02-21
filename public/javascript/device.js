@@ -4,10 +4,7 @@ function fetchData() {
     setInterval(async () => {
         const apiKey = "ZKKI4TRB3XMG63AU";
         const channelId = "2401895";
-        const fieldSoilMoisture = "Soil MoistureE";
-        const fieldTemperature = "Temperature";
-        const fieldHumidity = "Humidity";
-
+       
         try {
             const response = await fetch(`https://api.thingspeak.com/channels/${channelId}/feeds/last.json?api_key=${apiKey}`);
             const data = await response.json();
