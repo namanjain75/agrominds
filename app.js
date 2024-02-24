@@ -1,4 +1,5 @@
 import app from "./server.js"
+import axios from "axios";
 import db from "./dbconfig.js"
 import {initialize} from "./passportConfig.js";
 import bcrypt, { hash } from "bcrypt";
@@ -150,6 +151,56 @@ app.get("/community",checkNotAuthenticated,(req,res)=>{
         subscription
     });
 })
+
+// this is a get req for chat
+app.get('/api/chat', async (req, res) => {
+    try {
+        const message = req.query.message;
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: 'gpt-3.5-turbo',
+                messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer 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', // Replace with your OpenAI API key
+                },
+            }
+        );
+
+        res.json({ message: response.data.choices[0].message.content });
+    } catch (error) {
+        console.error("Error:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+// app.get('/api/chat', async (req, res) => {
+//     try {
+//         const message = req.query.message;
+//         const response = await axios.post(
+//             'https://api.openai.com/v1/chat/completions',
+//             {
+//                 model: 'gpt-3.5-turbo',
+//                 messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
+//             },
+//             {
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'Authorization': 'Bearer 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', // Replace with your OpenAI API key
+//                 },
+//             }
+//         );
+
+//         res.json({ message: response.data.choices[0].message.content });
+//     } catch (error) {
+//         console.error("Error:", error.message);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// });
 
 // handeling the post request for register page
 
