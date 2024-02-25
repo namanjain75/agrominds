@@ -5,38 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatGPT Webpage</title>
-  
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+         
+        }
+    </style>
 </head>
 <body>
-    <h1>ChatGPT Webpage</h1>
+    <h1>Ask yout query</h1>
     <div>
-        <label for="userInput">User Input:</label>
+        <label for="userInput">Enter Your query:</label>
         <input type="text" id="userInput" placeholder="Type your message...">
         <button onclick="sendMessage()">Send</button>
     </div>
     <div id="chatContainer"></div>
 
-    <script>
-        function sendMessage() {
-            const userInput = document.getElementById("userInput").value;
-            if (!userInput) return;
-
-            const chatContainer = document.getElementById("chatContainer");
-            const userMessage = document.createElement("p");
-            userMessage.innerText = `You: ${userInput}`;
-            chatContainer.appendChild(userMessage);
-
-            fetch(`/api/chat?message=${encodeURIComponent(userInput)}`)
-                .then(response => response.json())
-                .then(data => {
-                    const chatResponse = document.createElement("p");
-                    chatResponse.innerText = `ChatGPT: ${data.message}`;
-                    chatContainer.appendChild(chatResponse);
-                })
-                .catch(error => console.error("Error fetching data:", error));
-
-            document.getElementById("userInput").value = "";
-        }
-    </script>
+    <script src="javascript/community.js"></script>
 </body>
 </html>

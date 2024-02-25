@@ -11,6 +11,8 @@ let emailuser;
 let logincheck=false;
 
 
+
+
 //middelwares
 initialize(passport);
 
@@ -66,6 +68,8 @@ app.get("/register",checkAuthenticated,(req,res)=>{
 app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
     subscription=req.user.subscription
     emailuser=req.user.email
+   
+    
     
     res.render("dashboard.ejs",{
         user:req.user.name,
@@ -100,7 +104,8 @@ app.get("/free",checkNotAuthenticated,(req,res)=>{
             if(err){
                 throw err;
             }
-            console.log(result.rows);});
+            console.log(result.rows);
+        });
 
     //after payment and above process theis will get exeued
     res.redirect("/dashboard")
@@ -117,7 +122,8 @@ app.get("/standerd",checkNotAuthenticated,(req,res)=>{
             if(err){
                 throw err;
             }
-            console.log(result.rows);});
+            console.log(result.rows);
+        });
 
     //after payment and above process theis will get exeued
     res.redirect("/dashboard")
@@ -148,7 +154,7 @@ res.render("device.ejs",{
 
 app.get("/community",checkNotAuthenticated,(req,res)=>{
     res.render("community/community.ejs",{
-        subscription
+        subscription,
     });
 })
 
@@ -165,7 +171,7 @@ app.get('/api/chat', async (req, res) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer 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', // Replace with your OpenAI API key
+                    'Authorization': 'Bearer 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', // Replace with your OpenAI API key
                 },
             }
         );
@@ -178,30 +184,6 @@ app.get('/api/chat', async (req, res) => {
 });
 
 
-// app.get('/api/chat', async (req, res) => {
-//     try {
-//         const message = req.query.message;
-//         const response = await axios.post(
-//             'https://api.openai.com/v1/chat/completions',
-//             {
-//                 model: 'gpt-3.5-turbo',
-//                 messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
-//             },
-//             {
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     'Authorization': 'Bearer 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', // Replace with your OpenAI API key
-//                 },
-//             }
-//         );
-
-//         res.json({ message: response.data.choices[0].message.content });
-//     } catch (error) {
-//         console.error("Error:", error.message);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
-
 // handeling the post request for register page
 
 app.post("/registerform",async (req,res)=>{
@@ -212,9 +194,7 @@ app.post("/registerform",async (req,res)=>{
         // error=[];
         
     }
-    else{
-        // console.log({name, email,password,passwordconfirm});
-    }
+   
 
     if(error.length>0){
         res.render("register.ejs",{
@@ -234,7 +214,7 @@ app.post("/registerform",async (req,res)=>{
                 if(err){
                     throw err;
                 }
-                console.log(result.rows);
+                // console.log(result.rows);
 
                 if(result.rows.length>0){
                     error.push({message:"Email already register"})
@@ -247,7 +227,7 @@ app.post("/registerform",async (req,res)=>{
                             throw err
                         }
                         else{
-                            console.log(result.rows);
+                            // console.log(result.rows);
                             req.flash("success_msg","Successfully registered please login");
                             res.redirect("/login")
                         }

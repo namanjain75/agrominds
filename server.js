@@ -8,7 +8,7 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port,()=>{
-    console.log(`The server is started on port ${port}`);
+    console.log(`http://127.0.0.1:${port}/`);
 })
 
 export default app;

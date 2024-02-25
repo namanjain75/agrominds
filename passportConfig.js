@@ -10,7 +10,7 @@ const localstrategy= passport_local.Strategy;
 export function initialize(passport){
 
     const authenticateUser = (email, password, done) => {
-        console.log(email, password);
+        // console.log(email, password);
         db.query(
           `SELECT * FROM users WHERE email = $1`,
           [email],
@@ -18,7 +18,7 @@ export function initialize(passport){
             if (err) {
               throw err;
             }
-            console.log(results.rows);
+            // console.log(results.rows);
     
             if (results.rows.length > 0) {
               const user = results.rows[0];
@@ -72,7 +72,7 @@ export function initialize(passport){
       if (err) {
         return done(err);
       }
-      console.log(`ID is ${results.rows[0].id}`);
+      // console.log(`ID is ${results.rows[0].id}`);
       return done(null, results.rows[0]);
     });
   });
