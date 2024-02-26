@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
 const app = express();
-const port=8080;
+dotenv.config();
+const port =process.env.SERVER_PORT
+
 
 // middelwares i required
 app.use(express.static("public"));

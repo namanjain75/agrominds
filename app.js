@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import app from "./server.js"
 import axios from "axios";
 import db from "./dbconfig.js"
@@ -9,6 +10,10 @@ import passport from "passport";
 let subscription;
 let emailuser;
 let logincheck=false;
+
+dotenv.config();
+// console.log("Token=",process.env.OPEN_API_TOKEN);
+
 
 
 
@@ -171,7 +176,7 @@ app.get('/api/chat', async (req, res) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer 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', // Replace with your OpenAI API key
+                    'Authorization': `Bearer ${process.env.OPEN_API_TOKEN}`, // Replace with your OpenAI API key
                 },
             }
         );
