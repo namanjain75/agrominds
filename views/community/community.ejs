@@ -1,2 +1,26 @@
 <%- include("../partials/navbarloggedin.ejs") %>
-<h1>This is the community page where tips and support will be provided</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Webpage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+         
+        }
+    </style>
+</head>
+<body>
+    <h1>Ask yout query</h1>
+    <div>
+        <label for="userInput">Enter Your query:</label>
+        <input type="text" id="userInput" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <div id="chatContainer"></div>
+
+    <script src="javascript/community.js"></script>
+</body>
+</html>

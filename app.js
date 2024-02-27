@@ -1,4 +1,6 @@
+import dotenv from "dotenv";
 import app from "./server.js"
+import axios from "axios";
 import db from "./dbconfig.js"
 import {initialize} from "./passportConfig.js";
 import bcrypt, { hash } from "bcrypt";
@@ -8,6 +10,12 @@ import passport from "passport";
 let subscription;
 let emailuser;
 let logincheck=false;
+
+dotenv.config();
+// console.log("Token=",process.env.OPEN_API_TOKEN);
+
+
+
 
 
 //middelwares
@@ -71,6 +79,8 @@ app.get("/profile",checkNotAuthenticated,function(req, res) {
 app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
     subscription=req.user.subscription
     emailuser=req.user.email
+   
+    
     
     res.render("dashboard.ejs",{
         user:req.user.name,
@@ -105,7 +115,8 @@ app.get("/free",checkNotAuthenticated,(req,res)=>{
             if(err){
                 throw err;
             }
-            console.log(result.rows);});
+            console.log(result.rows);
+        });
 
     //after payment and above process theis will get exeued
     res.redirect("/dashboard")
@@ -122,7 +133,8 @@ app.get("/standerd",checkNotAuthenticated,(req,res)=>{
             if(err){
                 throw err;
             }
-            console.log(result.rows);});
+            console.log(result.rows);
+        });
 
     //after payment and above process theis will get exeued
     res.redirect("/dashboard")
@@ -153,10 +165,9 @@ res.render("device.ejs",{
 
 app.get("/community",checkNotAuthenticated,(req,res)=>{
     res.render("community/community.ejs",{
-        subscription
+        subscription,
     });
 })
-
 
 // handeling the post request for register page
 
@@ -168,9 +179,7 @@ app.post("/registerform",async (req,res)=>{
         // error=[];
         
     }
-    else{
-        // console.log({name, email,password,passwordconfirm});
-    }
+   
 
     if(error.length>0){
         res.render("register.ejs",{
@@ -190,7 +199,7 @@ app.post("/registerform",async (req,res)=>{
                 if(err){
                     throw err;
                 }
-                console.log(result.rows);
+                // console.log(result.rows);
 
                 if(result.rows.length>0){
                     error.push({message:"Email already register"})
@@ -203,7 +212,7 @@ app.post("/registerform",async (req,res)=>{
                             throw err
                         }
                         else{
-                            console.log(result.rows);
+                            // console.log(result.rows);
                             req.flash("success_msg","Successfully registered please login");
                             res.redirect("/login")
                         }

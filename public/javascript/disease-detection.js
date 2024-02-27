@@ -4,6 +4,7 @@ let disease=document.querySelector("#disease");
 
 
     console.log("Hello world");
+    
 let button = document.querySelector(".button");
 
 button.addEventListener("click", () => {
@@ -19,7 +20,7 @@ button.addEventListener("click", () => {
     }
 });
 
-
+let mydisease;
 
 const URL = "../disease-detection-model/";
 let model, webcam, labelContainer, maxPredictions;
@@ -66,7 +67,7 @@ async function predict(canvas) {
     }, 0);
 
     // Store the name of the class with the highest probability in the variable 'maximum'
-    const mypredection = prediction[maxIndex].className;
+    let mypredection = prediction[maxIndex].className;
 
     // Display the prediction with the highest probability
     // const classPrediction = mypredection + ": " + prediction[maxIndex].probability.toFixed(2);
@@ -74,7 +75,10 @@ async function predict(canvas) {
 
     // Now, 'mypredection' contains the name of the class with the highest probability
     console.log("Highest probability class: ", mypredection);
+    mydisease=mypredection;
     disease.innerText=mypredection;
+    sendMessage(mydisease);
+
 
     
 
@@ -102,4 +106,32 @@ function displayImagePreview(file) {
 
 
 
-// Now write your own methods to retutn what to do with the disease 
+
+// this funciton is for chatgpt
+function sendMessage(mydisease) {
+    // const userInput = document.getElementById("userInput").value;
+    // if (!userInput) return;
+    console.log(mydisease);
+   
+
+    const chatContainer = document.getElementById("chatContainer");
+    const userMessage = document.createElement("p");
+    
+    chatContainer.appendChild(userMessage);
+
+    fetch(`/api/chat?message=${encodeURIComponent(`Tell me about this ${mydisease} and its cure `)}`)
+        .then(response => response.json())
+        .then(data => {
+            const chatResponse = document.createElement("p");
+            chatResponse.innerText = `AgroMinds: ${data.message}`;
+            chatContainer.appendChild(chatResponse);
+        })
+        .catch(error => console.error("Error fetching data:", error));
+
+
+
+}
+
+
+
+
