@@ -62,6 +62,12 @@ app.get("/register",checkAuthenticated,(req,res)=>{
     res.render("register.ejs");
 })
 
+app.get("/profile",checkNotAuthenticated,function(req, res) {
+    res.render("profile.ejs"),{
+        user:req.user.name
+    }; // Render the profile.ejs file
+});
+
 app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
     subscription=req.user.subscription
     emailuser=req.user.email
@@ -150,6 +156,7 @@ app.get("/community",checkNotAuthenticated,(req,res)=>{
         subscription
     });
 })
+
 
 // handeling the post request for register page
 
