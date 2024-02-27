@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+
 import app from "./server.js"
 import axios from "axios";
 import db from "./dbconfig.js"
@@ -10,13 +10,6 @@ import passport from "passport";
 let subscription;
 let emailuser;
 let logincheck=false;
-
-dotenv.config();
-// console.log("Token=",process.env.OPEN_API_TOKEN);
-
-
-
-
 
 //middelwares
 initialize(passport);
@@ -38,6 +31,7 @@ app.use(flash())
 
 
 //  handeling all the get request
+
 app.get("/",(req,res)=>{
     res.render("index.ejs");
 })
@@ -71,9 +65,10 @@ app.get("/register",checkAuthenticated,(req,res)=>{
 })
 
 app.get("/profile",checkNotAuthenticated,function(req, res) {
-    res.render("profile.ejs"),{
-        user:req.user.name
-    }; // Render the profile.ejs file
+    
+    res.render("profile.ejs",{
+        subscription
+    });
 });
 
 app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
