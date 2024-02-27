@@ -70,6 +70,12 @@ app.get("/register",checkAuthenticated,(req,res)=>{
     res.render("register.ejs");
 })
 
+app.get("/profile",checkNotAuthenticated,function(req, res) {
+    res.render("profile.ejs"),{
+        user:req.user.name
+    }; // Render the profile.ejs file
+});
+
 app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
     subscription=req.user.subscription
     emailuser=req.user.email
@@ -162,32 +168,6 @@ app.get("/community",checkNotAuthenticated,(req,res)=>{
         subscription,
     });
 })
-
-// this is a get req for chat
-app.get('/api/chat', async (req, res) => {
-    try {
-        const message = req.query.message;
-        const response = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-                model: 'gpt-3.5-turbo',
-                messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.OPEN_API_TOKEN}`, // Replace with your OpenAI API key
-                },
-            }
-        );
-
-        res.json({ message: response.data.choices[0].message.content });
-    } catch (error) {
-        console.error("Error:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
 
 // handeling the post request for register page
 

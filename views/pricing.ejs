@@ -1,9 +1,4 @@
-<% if(logincheck){ %>
-<%- include("partials/navbarloggedin.ejs") %>
-<% }else{ %>
-  <%- include("partials/navbar.ejs") %>
-  <% } %>
-<%#= logincheck%>
+
 
 <head>
     <title>pricing agrominds</title>
@@ -14,6 +9,13 @@
   
 
     <!-- // write your code here -->
+    <div class="priceHero" style="margin-left: 7%; margin-right: 7%;">
+      <% if(logincheck){ %>
+        <%- include("partials/navbarloggedin.ejs") %>
+        <% }else{ %>
+          <%- include("partials/navbar.ejs") %>
+          <% } %>
+        <%#= logincheck%>
 
     <div class="container-fluid" style="background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);">
         <div class="container p-5">
@@ -131,6 +133,7 @@
             </div>
           </div>    
         </div>
-
+<%- include("partials/footer.ejs") %>
+</div>
     
 </body>
