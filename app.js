@@ -225,6 +225,30 @@ app.post("/login",passport.authenticate("local",{
     failureFlash:true
 }))
 
+//chat gpt integration 
+app.get('/api/chat', async (req, res) => {
+    try {
+        const message = req.query.message;
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: 'gpt-3.5-turbo',
+                messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.OPEN_API_TOKEN}`, // Replace with your OpenAI API key
+                },
+            }
+        );
+
+        res.json({ message: response.data.choices[0].message.content });
+    } catch (error) {
+        console.error("Error:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 // Function for authentication session
 function checkAuthenticated(req, res, next) {
