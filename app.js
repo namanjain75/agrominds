@@ -38,6 +38,7 @@ app.use(flash())
 
 
 //  handeling all the get request
+app.set('view engine', 'ejs');
 app.get("/",(req,res)=>{
     res.render("index.ejs");
 })
@@ -70,11 +71,21 @@ app.get("/register",checkAuthenticated,(req,res)=>{
     res.render("register.ejs");
 })
 
-app.get("/profile",checkNotAuthenticated,function(req, res) {
-    res.render("profile.ejs"),{
-        user:req.user.name
-    }; // Render the profile.ejs file
-});
+// app.get("/profile",checkNotAuthenticated,async(req,res)=> {
+//     try{
+//         const userId = req.params.userId;
+//         console.log(userId);
+//         const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+//         const user = result.rows[0]; // Assuming the query returns one user
+//         console.log(user);
+
+//     res.render("profile",{user});
+//     } // Render the profile.ejs file
+//     catch(err){
+//         console.error('Error retrieving user data', err);
+//         res.status(500).send('Error retrieving user data');
+//     }
+// });
 
 app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
     subscription=req.user.subscription
@@ -156,6 +167,31 @@ app.get("/premium",checkNotAuthenticated,(req,res)=>{
     res.redirect("/dashboard")
         
 })
+
+//chat gpt integration 
+app.get('/api/chat', async (req, res) => {
+    try {
+        const message = req.query.message;
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: 'gpt-3.5-turbo',
+                messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.OPEN_API_TOKEN}`, // Replace with your OpenAI API key
+                },
+            }
+        );
+
+        res.json({ message: response.data.choices[0].message.content });
+    } catch (error) {
+        console.error("Error:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 app.get("/device",checkNotAuthenticated,(req,res)=>{
 res.render("device.ejs",{
