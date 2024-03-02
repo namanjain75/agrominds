@@ -1,3 +1,6 @@
+
+
+
 let disease=document.querySelector("#disease");
 
 
@@ -123,6 +126,7 @@ function sendMessage(mydisease) {
         .then(response => response.json())
         .then(data => {
             const chatResponse = document.createElement("p");
+            chatResponse.style.color="white";
             chatResponse.innerText = `AgroMinds: ${data.message}`;
             chatContainer.appendChild(chatResponse);
         })
