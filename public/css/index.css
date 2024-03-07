@@ -3,7 +3,11 @@ body{
     padding: 0;
     
 }
-
+#homefooter{
+    /* margin-top: 180%; */
+    position: relative !important;
+top: 110px !important;
+}
 /* .hero{
     margin-left: 7%;
     margin-right: 7%;
@@ -229,6 +233,9 @@ body{
 
     .footer{
         margin-top: 180%;
+        position: relative !important;
+        top: 110px !important;
+        
     }
 
 }

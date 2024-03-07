@@ -7,12 +7,23 @@ import bcrypt, { hash } from "bcrypt";
 import session from "express-session";
 import flash from "express-flash";
 import passport from "passport";
+import Razorpay from "razorpay";
+const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
+
 let subscription;
 let emailuser;
+let user_name;
 let logincheck=false;
-
 //middelwares
 initialize(passport);
+
+var razorpayInstance = new Razorpay({
+    key_id:process.env.RAZORPAY_ID_KEY ,
+    key_secret:process.env.RAZORPAY_SECRET_KEY
+});
+
+
+
 
 app.use(session(
     {
@@ -43,10 +54,16 @@ app.get("/disease_detection",checkNotAuthenticated,isFree,(req,res)=>{
 })
 
 app.get("/pricing",isloggedin,(req,res)=>{
-    res.render("pricing.ejs",{
-        logincheck,
-        subscription
-    });
+    try {
+        res.render('pricing.ejs',{
+            key_id:process.env.RAZORPAY_ID_KEY,
+            logincheck,
+        subscription,
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+   
     
 })
 
@@ -72,6 +89,7 @@ app.get("/profile",checkNotAuthenticated,function(req, res) {
 app.get("/dashboard", checkNotAuthenticated ,(req,res)=>{
     subscription=req.user.subscription
     emailuser=req.user.email
+    user_name=req.user.name
    
     
     
@@ -119,15 +137,15 @@ app.get("/free",checkNotAuthenticated,(req,res)=>{
 app.get("/standerd",checkNotAuthenticated,(req,res)=>{
 
     //code for payment interface on succcessfull payent this query will be executed
-    db.query( 
-        `UPDATE users
-        SET subscription = 'Standard'
-        WHERE email = $1;`,[emailuser],(err,result)=>{
-            if(err){
-                throw err;
-            }
-            console.log(result.rows);
-        });
+    // db.query( 
+    //     `UPDATE users
+    //     SET subscription = 'Standard'
+    //     WHERE email = $1;`,[emailuser],(err,result)=>{
+    //         if(err){
+    //             throw err;
+    //         }
+    //         console.log(result.rows);
+    //     });
 
     //after payment and above process theis will get exeued
     res.redirect("/dashboard")
@@ -136,20 +154,19 @@ app.get("/standerd",checkNotAuthenticated,(req,res)=>{
 app.get("/premium",checkNotAuthenticated,(req,res)=>{
 
     //code for payment interface on succcessfull payent this query will be executed
-    db.query( 
-        `UPDATE users
-        SET subscription = 'Premium'
-        WHERE email = $1;`,[emailuser],(err,result)=>{
-            if(err){
-                throw err;
-            }
-            console.log(result.rows);});
+    // db.query( 
+    //     `UPDATE users
+    //     SET subscription = 'Premium'
+    //     WHERE email = $1;`,[emailuser],(err,result)=>{
+    //         if(err){
+    //             throw err;
+    //         }
+    //         console.log(result.rows);});
 
     //after payment and above process theis will get exeued
     res.redirect("/dashboard")
         
 })
-
 //chat gpt integration 
 app.get('/api/chat', async (req, res) => {
     try {
@@ -188,6 +205,51 @@ app.get("/community",checkNotAuthenticated,(req,res)=>{
 })
 
 // handeling the post request for register page
+
+// razor pay rder creation
+
+app.post('/createOrder', async (req, res) => {
+    try {
+        const amount = req.body.amount * 100;
+        const options = {
+            amount: amount,
+            currency: 'INR',
+            receipt: 'razorUser@gmail.com'
+        };
+
+        razorpayInstance.orders.create(options, async (err, order) => {
+            if (!err) {
+                // Update user's subscription in the database after successful payment
+                await db.query(
+                    `UPDATE users
+                    SET subscription = $1
+                    WHERE email = $2;`,
+                    [req.body.name, req.user.email]
+                );
+
+                res.status(200).send({
+                    success: true,
+                    msg: 'Order Created',
+                    order_id: order.id,
+                    amount: amount,
+                    key_id: RAZORPAY_ID_KEY,
+                    product_name: req.body.name,
+                    description: req.body.description,
+                    contact: '8567340632',
+                    name: user_name,
+                    email: emailuser
+                });
+            } else {
+                res.status(400).send({ success: false, msg: 'Something went wrong!' });
+            }
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+});
+
+// ...
+
 
 app.post("/registerform",async (req,res)=>{
     let {name, email ,password ,passwordconfirm}= req.body
